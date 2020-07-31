@@ -1,5 +1,5 @@
 import email
-import connection_email
+from email import connection_email
 
 
 def get_inbox(host: str = 'imap.gmail.com', username: str = 'automate.clan@gmail.com', password: str = ''):

@@ -1,6 +1,6 @@
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from connection_email import login_SMTP, logout_SMTP
+from email.connection_email import login_SMTP, logout_SMTP
 
 
 def send(server, from_email: str = 'Automate Clan <automate.clan@gmail.com>', to_emails: list = [],
@@ -41,6 +41,17 @@ def create_message(text: str = 'Email Body', subject: str = 'Hello World',
 def send_mail(host: str = 'smtp.gmail.com', port: int = 587, username: str = 'automate.clan@gmail.com',
               password: str = '', text: str = 'Email Body', subject: str = 'No Subject',
               from_email: str = 'Automate Clan <automate.clan@gmail.com>', to_emails: list = [None]):
+    """
+    :param host: smtp host
+    :param port: smtp connection port
+    :param username: e-mail address
+    :param password: password of the e-mail address
+    :param text: e-mail body
+    :param subject: e-mail subject
+    :param from_email: e-mail sending message
+    :param to_emails: e-mail receiving message
+    :return:
+    """
     server = login_SMTP(host, port, username, password)
     message = create_message(text, subject, from_email, to_emails)
     sent = send(server, from_email, to_emails, message)

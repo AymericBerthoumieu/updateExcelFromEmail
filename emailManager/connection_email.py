@@ -3,8 +3,8 @@ import imaplib
 
 def login_SMTP(host: str = 'smtp.gmail.com', port: int = 587, username: str = 'automate.clan@gmail.com', password: str = ''):
     """
-    :param host:
-    :param port:
+    :param host: smtp host
+    :param port: smtp connection port
     :param username: e-mail address
     :param password: password of the e-mail address
     :return: login to Gmail's smtp server
