@@ -2,7 +2,7 @@ from excelDbManager.errors import *
 from excelDbManager.interact_db import exist_in_db_id
 
 
-def check_ajout_public(data, private):
+def check_add_public(data, private):
     """
     :param data: dict containing the value of the cells to add a new line
     :param private : path to the private database
@@ -57,3 +57,33 @@ def check_modif_public(data, public, private):
         raise UnknownIdPersonneError
     return True
 
+
+def check_add_private(data):
+    """
+    :param data: dict containing the value of the cells to add a new line
+    :return: True if value are corrects else raise an exception
+    """
+    # id_personne must be empty
+    if 'id_personne' in data:
+        raise NonEmptyIdPersonneError
+    return True
+
+
+def check_modif_private(data, private):
+    """
+    :param data: dict containing the value of the cells to change a line
+    :param private : path to the private database
+    :return: True if value are corrects else raise an exception
+    """
+    # id_personne must be filled
+    if not ('id_personne' in data):
+        raise EmptyIdPersonneError
+    # id_personne must be an int
+    try:
+        data['id_personne'] = int(data['id_personne'])
+    except:
+        raise WrongIdPersonneTypeError
+    # id_base must exist in excel file
+    if not (exist_in_db_id(data['id_personne'], private)):
+        raise UnknownIdPersonneError
+    return True
