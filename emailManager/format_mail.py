@@ -1,7 +1,7 @@
 from emailManager.errors import *
 
 
-def format_for_add(message_body: str, headers: list):
+def format_data(message_body: str, headers: list):
     """
     :param message_body: body of e-mail message
     :param headers: data to find in e-mail body

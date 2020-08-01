@@ -57,3 +57,9 @@ def exist_in_db_id(id, source):
     else:
         exist = True
     return exist
+
+def add_line(data, path):
+    return True
+
+def modif_line(data, path):
+    return True

@@ -23,7 +23,7 @@ private_headers = ['id_personne', 'nom', 'prenom', 'email', 'tel', 'linkedin', '
 
 # unseen = inbox.get_inbox(host_imap, emailAddress, password)
 
-def main(private_db_path, public_db_path, backup_folder_path, host_imap, emailAddress, password):
+def main(private_db_path, public_db_path, backup_folder_path, host_imap, emailAddress, password, public_headers, private_headers):
     # create backup
     interact_db.create_backup(private_db_path, backup_folder_path)
     interact_db.create_backup(public_db_path, backup_folder_path)
@@ -34,7 +34,7 @@ def main(private_db_path, public_db_path, backup_folder_path, host_imap, emailAd
     # process e-mails
     for message in unseen_messages:
         try:
-            process_message(message)
+            process_message(message, public_headers, private_headers, public_db_path, private_db_path)
         except Exception as e:
             sender = get_sender(message['from'])
             text = format_mail.format_error_response(message, e)
