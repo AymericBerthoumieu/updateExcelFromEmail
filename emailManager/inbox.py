@@ -1,5 +1,5 @@
 import email
-from email import connection_email
+from emailManager.connection_email import login_IMAP4_SSL
 
 
 def get_inbox(host: str = 'imap.gmail.com', username: str = 'automate.clan@gmail.com', password: str = ''):
@@ -9,7 +9,7 @@ def get_inbox(host: str = 'imap.gmail.com', username: str = 'automate.clan@gmail
     :param password: password of the e-mail address
     :return: all unseen messages from inbox of username
     """
-    mail = connection_email.login_IMAP4_SSL(host=host, username=username, password=password)
+    mail = login_IMAP4_SSL(host=host, username=username, password=password)
     mail.select("inbox")
     _, search_data = mail.search(None, 'UNSEEN')
     my_message = []
@@ -34,6 +34,12 @@ def get_email_body(part):
     :param part:
     :return:
     """
+    #
+    if part.get_content_type() == 'multipart/alternative':
+        body = part.get_payload()
+        if isinstance(body,list):
+            part = get_plain(body)
+
     # plain text
     if part.get_content_type() == "text/plain":
         key = 'body'
@@ -65,3 +71,17 @@ def get_message(mail, num):
         key, body = get_email_body(part)
         email_data[key] = body
     return email_data
+
+def get_plain(messages):
+    """
+    :param messages: list of email.message.Message
+    :return: message with content_type == 'text/plain'
+    """
+    i = 0
+    while i < len(messages) and messages[i].get_content_type() != 'text/plain':
+        i += 1
+    if i >= len(messages):
+        out = None
+    else:
+        out = messages[i]
+    return out

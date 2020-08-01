@@ -1,6 +1,6 @@
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from email.connection_email import login_SMTP, logout_SMTP
+from emailManager.connection_email import login_SMTP, logout_SMTP
 
 
 def send(server, from_email: str = 'Automate Clan <automate.clan@gmail.com>', to_emails: list = [],
@@ -10,7 +10,7 @@ def send(server, from_email: str = 'Automate Clan <automate.clan@gmail.com>', to
     :param from_email: e-mail address sending the message
     :param to_emails: list of e-mail address receiving the message
     :param msg_str: message as an str
-    :return: send a msg_str from from-email to to_emails using server
+    :return: send a msg_str from from_email to to_emails using server
     """
     try:
         server.sendmail(from_email, to_emails, msg_str)
