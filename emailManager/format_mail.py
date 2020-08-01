@@ -17,6 +17,7 @@ def format_data(message_body: str, headers: list):
         raise WrongData
     return formatted_data
 
+
 def format_error_response(message, error):
     msg_format = """ An error as occurred:
     {error_str}
@@ -28,4 +29,30 @@ def format_error_response(message, error):
     {body}
     """
     msg = msg_format.format(error_str=error.__str__(), subject=message['Subject'], body=message['body'])
+    return msg
+
+
+def format_done(message):
+    msg_format = """ Done with request
+    ===================
+        Your e-mail
+    ===================
+    Subject : {subject}
+    Body :
+    {body}
+    """
+    msg = msg_format.format(subject=message['Subject'], body=message['body'])
+    return msg
+
+
+def format_done_and_id(message, id_personne):
+    msg_format = """ Done with request. New id personne is : {id_personne}
+    ===================
+        Your e-mail
+    ===================
+    Subject : {subject}
+    Body :
+    {body}
+    """
+    msg = msg_format.format(id_personne=id_personne, subject=message['Subject'], body=message['body'])
     return msg

@@ -9,24 +9,26 @@ def process_message(message, public_headers, private_headers, public_db_path, pr
         raise GmailAddressesOnly
     # find action
     subject = message['Subject']
+    id_personne = -1
     if subject == '#Add #Public':
         data = format_mail.format_data(message['body'], public_headers)
         check_data.check_add_public(data, private_db_path)
-        interact_db.add_line(data, public_db_path)
+        interact_db.add_line_public(data, public_db_path)
     elif subject == '#Add #Private':
         data = format_mail.format_data(message['body'], private_headers)
         check_data.check_add_private(data)
-        interact_db.add_line(data, private_db_path)
+        id_personne = interact_db.add_line_private(data, private_db_path)
     elif subject == '#Mod #Public':
         data = format_mail.format_data(message['body'], public_headers)
         check_data.check_modif_public(data, public_db_path, private_db_path)
-        interact_db.modif_line(data, public_db_path)
+        interact_db.modif_line_public(data, public_db_path)
     elif subject == '#Mod #Private':
         data = format_mail.format_data(message['body'], private_headers)
         check_data.check_modif_private(data, private_db_path)
-        interact_db.modif_line(data, public_db_path)
+        interact_db.modif_line_private(data, public_db_path)
     else:
         raise UnunderstandableSubject
+    return id_personne
 
 
 def get_sender(sender_str):

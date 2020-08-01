@@ -36,3 +36,12 @@ class UnknownIdBaseError(Exception):
 class UnknownIdPersonneError(Exception):
     def __str__(self):
         return "UnknownIdPersonneError : this 'id personne' does not exist in the database."
+
+
+class MaccroError(Exception):
+    def __init__(self, name, path):
+        self.name = name
+        self.source = path
+
+    def __str__(self):
+        return "MaccroError : an error has occurred while trying to run maccro : " + self.name + "in " + self.source
