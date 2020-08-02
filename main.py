@@ -4,7 +4,7 @@ from process import *
 
 # E-mail data
 emailAddress = 'clan.automate@gmail.com'
-password = input('password :')
+password = 'ViveleCLAN47600!' #input('password :')
 host_smtp = 'smtp.gmail.com'
 host_imap = 'imap.gmail.com'
 port = 587
@@ -39,6 +39,7 @@ def main(private_db_path, public_db_path, backup_folder_path, host_imap, emailAd
                 text = format_mail.format_done_and_id(message, id_personne)
             subject = 'Done with request'
         except Exception as e:
+            print(e)
             text = format_mail.format_error_response(message, e)
             subject = 'Error'
         # Inform sender if done or error

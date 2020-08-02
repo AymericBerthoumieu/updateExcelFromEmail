@@ -7,6 +7,7 @@ def format_data(message_body: str, headers: list):
     :param headers: data to find in e-mail body
     :return: dict with data
     """
+    message_body = message_body.replace('\r', ' ').replace('\n', '')
     splited = message_body.split('#')
     formatted_data = {}
     try:
@@ -28,7 +29,7 @@ def format_error_response(message, error):
     Body :
     {body}
     """
-    msg = msg_format.format(error_str=error.__str__(), subject=message['Subject'], body=message['body'])
+    msg = msg_format.format(error_str=error.__str__(), subject=message['subject'], body=message['body'])
     return msg
 
 
@@ -41,7 +42,7 @@ def format_done(message):
     Body :
     {body}
     """
-    msg = msg_format.format(subject=message['Subject'], body=message['body'])
+    msg = msg_format.format(subject=message['subject'], body=message['body'])
     return msg
 
 
@@ -54,5 +55,5 @@ def format_done_and_id(message, id_personne):
     Body :
     {body}
     """
-    msg = msg_format.format(id_personne=id_personne, subject=message['Subject'], body=message['body'])
+    msg = msg_format.format(id_personne=id_personne, subject=message['subject'], body=message['body'])
     return msg
