@@ -4,7 +4,7 @@ from process import *
 
 # E-mail data
 emailAddress = 'clan.automate@gmail.com'
-password = 'ViveleCLAN47600!' #input('password :')
+password = input('password :')
 host_smtp = 'smtp.gmail.com'
 host_imap = 'imap.gmail.com'
 port = 587
