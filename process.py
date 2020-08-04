@@ -24,8 +24,9 @@ def process_message(message, public_headers, private_headers, public_db_path, pr
         interact_db.modif_line_public(data, public_db_path)
     elif subject == '#Mod #Private':
         data = format_mail.format_data(message['body'], private_headers)
+        print(data)
         ok = check_data.check_modif_private(data, private_db_path)
-        interact_db.modif_line_private(data, public_db_path)
+        interact_db.modif_line_private(data, private_db_path)
     else:
         raise UnunderstandableSubject
     return primary_key

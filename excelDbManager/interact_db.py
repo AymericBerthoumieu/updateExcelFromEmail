@@ -148,7 +148,7 @@ def modif_line_private(data, path):
     row = get_line_by_id(data['id_personne'], xlSheet)
 
     # do modification
-    xlSheet.Cells(row, CELLS_PUBLIC['date']).value = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    xlSheet.Cells(row, CELLS_PRIVATE['date']).value = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     for element in data:
         if (element != 'id_personne') and (element != 'date'):
             xlSheet.Cells(row, CELLS_PRIVATE[element]).value = data[element]
