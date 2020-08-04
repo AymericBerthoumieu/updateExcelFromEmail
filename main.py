@@ -2,6 +2,7 @@ from emailManager import inbox, send_email, format_mail
 from excelDbManager import interact_db
 from process import *
 import getpass
+import time
 
 # E-mail data
 emailAddress = 'clan.automate@gmail.com'
@@ -20,7 +21,7 @@ public_headers = ['id_base', 'id_personne', 'domaine_etude', 'pays_etude', 'etab
 private_headers = ['id_personne', 'nom', 'prenom', 'email', 'tel', 'linkedin', 'situation', 'promo']
 
 
-def main(private_db_path, public_db_path, backup_folder_path, host_imap, emailAddress, password, public_headers,
+def one_shot(private_db_path, public_db_path, backup_folder_path, host_imap, emailAddress, password, public_headers,
          private_headers):
     # create backup
     interact_db.create_backup(private_db_path, backup_folder_path)
@@ -49,5 +50,12 @@ def main(private_db_path, public_db_path, backup_folder_path, host_imap, emailAd
     return None
 
 
-main(private_db_path, public_db_path, backup_folder_path, host_imap, emailAddress, password, public_headers,
+def main(timelimit, private_db_path, public_db_path, backup_folder_path, host_imap, emailAddress, password, public_headers,
+     private_headers):
+    time1 = time.time()
+    time2 = time.time()
+    while time2 - time1 < timelimit:
+        one_shot(private_db_path, public_db_path, backup_folder_path, host_imap, emailAddress, password, public_headers,
      private_headers)
+        wait_minute(2)
+        time2 = time.time()

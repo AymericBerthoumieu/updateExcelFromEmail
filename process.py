@@ -1,6 +1,7 @@
 from emailManager.errors import *
 from emailManager import format_mail
 from excelDbManager import check_data, interact_db
+import time
 
 
 def process_message(message, public_headers, private_headers, public_db_path, private_db_path):
@@ -40,3 +41,6 @@ def get_sender(sender_str):
     if '<' in sender_str:
         sender_str = sender_str[sender_str.index('<') + 1:sender_str.index('>')]
     return sender_str
+
+def wait_minute(minutes):
+    time.sleep(60*minutes)
