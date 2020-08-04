@@ -1,6 +1,5 @@
 import shutil
 import datetime
-import openpyxl
 import os
 import os.path
 import win32com.client
@@ -49,24 +48,6 @@ def get_name_from_path(path):
     return name, extension
 
 
-def exist_in_db_id(id, source):
-    """
-    :param id: int
-    :param source: path to database
-    :return: True if id exist in source else False
-    """
-    wb = openpyxl.load_workbook(filename=source)
-    sheet = wb[S_BASE]
-    row = 3
-    while (sheet['A' + str(row)].value is not None) and (sheet['A' + str(row)].value != id):
-        row += 1
-    if sheet['A' + str(row)].value is None:
-        exist = False
-    else:
-        exist = True
-    return exist
-
-
 def get_first_empty_row(sheet):
     primary_key = -1
     row = 3
@@ -74,6 +55,18 @@ def get_first_empty_row(sheet):
         primary_key = max(primary_key, sheet.Cells(row, 1).value)
         row += 1
     return row, primary_key + 1
+
+
+def exist_in_db_id(key, path):
+    xl = win32com.client.Dispatch("Excel.Application")  # activate excel
+    wb = xl.Workbooks.Open(os.path.abspath(path))  # open workbook
+    xlSheet = wb.Sheets(S_BASE)  # select sheet
+    try:
+        get_line_by_id(key, xlSheet)
+        exist = True
+    except:
+        exist = False
+    return exist
 
 
 def get_line_by_id(primary_key, sheet):
@@ -94,7 +87,7 @@ def add_line_public(data, path):
 
     # add data
     xlSheet.Cells(row, CELLS_PUBLIC['id_base']).value = primary_key
-    xlSheet.Cells(row, CELLS_PUBLIC['date']).value = '=NOW()'
+    xlSheet.Cells(row, CELLS_PUBLIC['date']).value = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     for element in data:
         if (element != 'id_base') and (element != 'date'):
             xlSheet.Cells(row, CELLS_PUBLIC[element]).value = data[element]
@@ -103,7 +96,7 @@ def add_line_public(data, path):
     xl.DisplayAlerts = False  # avoid the alert about replacing the file
     wb.SaveAs(os.path.abspath(path), FileFormat=xlOpenXMLWorkbookMacroEnabled)  # save file with macros
     xl.Quit()
-    return -1
+    return int(primary_key)
 
 
 def add_line_private(data, path):
@@ -115,7 +108,7 @@ def add_line_private(data, path):
 
     # add data
     xlSheet.Cells(row, CELLS_PRIVATE['id_personne']).value = primary_key
-    xlSheet.Cells(row, CELLS_PRIVATE['date']).value = '=NOW()'
+    xlSheet.Cells(row, CELLS_PRIVATE['date']).value = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     for element in data:
         if (element != 'id_personne') and (element != 'date'):
             xlSheet.Cells(row, CELLS_PRIVATE[element]).value = data[element]
@@ -124,7 +117,7 @@ def add_line_private(data, path):
     xl.DisplayAlerts = False  # avoid the alert about replacing the file
     wb.SaveAs(os.path.abspath(path), FileFormat=xlOpenXMLWorkbookMacroEnabled)  # save file with macros
     xl.Quit()
-    return primary_key
+    return int(primary_key)
 
 
 def modif_line_public(data, path):
@@ -132,10 +125,10 @@ def modif_line_public(data, path):
     wb = xl.Workbooks.Open(os.path.abspath(path))  # open workbook
     xlSheet = wb.Sheets(S_BASE)  # select sheet
     # find where to write
-    row = get_line_by_id(xlSheet, data['id_base'])
+    row = get_line_by_id(data['id_base'], xlSheet)
 
     # do modification
-    xlSheet.Cells(row, CELLS_PUBLIC['date']).value = '=NOW()'
+    xlSheet.Cells(row, CELLS_PUBLIC['date']).value = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     for element in data:
         if (element != 'id_base') and (element != 'date'):
             xlSheet.Cells(row, CELLS_PUBLIC[element]).value = data[element]
@@ -152,13 +145,13 @@ def modif_line_private(data, path):
     wb = xl.Workbooks.Open(os.path.abspath(path))  # open workbook
     xlSheet = wb.Sheets(S_BASE)  # select sheet
     # find where to write
-    row = get_line_by_id(xlSheet, data['id_personne'])
+    row = get_line_by_id(data['id_personne'], xlSheet)
 
     # do modification
-    xlSheet.Cells(row, CELLS_PUBLIC['date']).value = '=NOW()'
+    xlSheet.Cells(row, CELLS_PUBLIC['date']).value = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     for element in data:
         if (element != 'id_personne') and (element != 'date'):
-            xlSheet.Cells(row, CELLS_PUBLIC[element]).value = data[element]
+            xlSheet.Cells(row, CELLS_PRIVATE[element]).value = data[element]
 
     # save and quit
     xl.DisplayAlerts = False  # avoid the alert about replacing the file

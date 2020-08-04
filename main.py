@@ -1,10 +1,11 @@
 from emailManager import inbox, send_email, format_mail
 from excelDbManager import interact_db
 from process import *
+import getpass
 
 # E-mail data
 emailAddress = 'clan.automate@gmail.com'
-password = input('password :')
+password = getpass.getpass(prompt='Password: ', stream=None)
 host_smtp = 'smtp.gmail.com'
 host_imap = 'imap.gmail.com'
 port = 587
@@ -32,11 +33,11 @@ def main(private_db_path, public_db_path, backup_folder_path, host_imap, emailAd
     for message in unseen_messages:
         sender = get_sender(message['from'])
         try:
-            id_personne = process_message(message, public_headers, private_headers, public_db_path, private_db_path)
-            if id_personne == -1:
+            primary_key = process_message(message, public_headers, private_headers, public_db_path, private_db_path)
+            if primary_key == -1:
                 text = format_mail.format_done(message)
             else:
-                text = format_mail.format_done_and_id(message, id_personne)
+                text = format_mail.format_done_and_id(message, primary_key)
             subject = 'Done with request'
         except Exception as e:
             print(e)
