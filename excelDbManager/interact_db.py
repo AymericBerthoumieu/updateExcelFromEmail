@@ -14,9 +14,8 @@ S_MANAGE = "Manage"
 S_MULTIPLE = "Ajouts Multiple"
 
 # Cells
-CELLS_PUBLIC = {'id_base': 'B2', 'id_personne': 'C2', 'domaine_etude': 'D2', 'pays_etude': 'E2', 'etablissement': 'F2',
-                'parcours_com': 'G2', 'domaine_pro': 'H2', 'metier': 'I2', 'employeur': 'J2', 'pays_pro': 'K2',
-                'com': 'L2'}
+CELLS_PUBLIC = {'id_base': 1, 'id_personne': 2, 'domaine_etude': 3, 'pays_etude': 4, 'etablissement': 5,
+                'parcours_com': 6, 'domaine_pro': 7, 'metier': 8, 'employeur': 9, 'pays_pro': 10, 'com': 11, 'date': 12}
 CELLS_PRIVATE = {'id_personne': 1, 'nom': 2, 'prenom': 3, 'email': 4, 'tel': 5, 'linkedin': 6, 'situation': 7,
                  'promo': 8, 'date': 9}
 
@@ -77,16 +76,33 @@ def get_first_empty_row(sheet):
     return row, primary_key + 1
 
 
+def get_line_by_id(primary_key, sheet):
+    row = 3
+    while (sheet.Cells(row, 1).value != primary_key) and (sheet.Cells(row, 1).value is not None):
+        row += 1
+    if sheet.Cells(row, 1).value is None:
+        raise IdUnknown(primary_key)
+    return row
+
+
 def add_line_public(data, path):
-    wb = openpyxl.load_workbook(filename=path)
-    sheet = wb[S_MANAGE]
-    # Place data
-    for key, value in data:
-        sheet[CELLS_PUBLIC[key]].value = value
-    # save to take change into account
-    wb.save(path)
-    # activate maccro
-    run_maccro(path, 'Ajouter_ligne_python')
+    xl = win32com.client.Dispatch("Excel.Application")  # activate excel
+    wb = xl.Workbooks.Open(os.path.abspath(path))  # open workbook
+    xlSheet = wb.Sheets(S_BASE)  # select sheet
+    # find where to write
+    row, primary_key = get_first_empty_row(xlSheet)
+
+    # add data
+    xlSheet.Cells(row, CELLS_PUBLIC['id_base']).value = primary_key
+    xlSheet.Cells(row, CELLS_PUBLIC['date']).value = '=NOW()'
+    for element in data:
+        if (element != 'id_base') and (element != 'date'):
+            xlSheet.Cells(row, CELLS_PUBLIC[element]).value = data[element]
+
+    # save and quit
+    xl.DisplayAlerts = False  # avoid the alert about replacing the file
+    wb.SaveAs(os.path.abspath(path), FileFormat=xlOpenXMLWorkbookMacroEnabled)  # save file with macros
+    xl.Quit()
     return -1
 
 
@@ -108,31 +124,44 @@ def add_line_private(data, path):
     xl.DisplayAlerts = False  # avoid the alert about replacing the file
     wb.SaveAs(os.path.abspath(path), FileFormat=xlOpenXMLWorkbookMacroEnabled)  # save file with macros
     xl.Quit()
-
     return primary_key
 
 
 def modif_line_public(data, path):
-    wb = openpyxl.load_workbook(filename=path)
-    sheet = wb[S_MANAGE]
-    # Place data
-    for key, value in data:
-        sheet[CELLS_PUBLIC[key]].value = value
-    # save to take change into account
-    wb.save(path)
-    # activate maccro
-    run_maccro(path, 'Modifier_ligne_python')
+    xl = win32com.client.Dispatch("Excel.Application")  # activate excel
+    wb = xl.Workbooks.Open(os.path.abspath(path))  # open workbook
+    xlSheet = wb.Sheets(S_BASE)  # select sheet
+    # find where to write
+    row = get_line_by_id(xlSheet, data['id_base'])
+
+    # do modification
+    xlSheet.Cells(row, CELLS_PUBLIC['date']).value = '=NOW()'
+    for element in data:
+        if (element != 'id_base') and (element != 'date'):
+            xlSheet.Cells(row, CELLS_PUBLIC[element]).value = data[element]
+
+    # save and quit
+    xl.DisplayAlerts = False  # avoid the alert about replacing the file
+    wb.SaveAs(os.path.abspath(path), FileFormat=xlOpenXMLWorkbookMacroEnabled)  # save file with macros
+    xl.Quit()
     return -1
 
 
 def modif_line_private(data, path):
-    wb = openpyxl.load_workbook(filename=path)
-    sheet = wb[S_MANAGE]
-    # Place data
-    for key, value in data:
-        sheet[CELLS_PRIVATE[key]].value = value
-    # save to take change into account
-    wb.save(path)
-    # activate maccro
-    run_maccro(path, 'Modifier_ligne_python')
+    xl = win32com.client.Dispatch("Excel.Application")  # activate excel
+    wb = xl.Workbooks.Open(os.path.abspath(path))  # open workbook
+    xlSheet = wb.Sheets(S_BASE)  # select sheet
+    # find where to write
+    row = get_line_by_id(xlSheet, data['id_personne'])
+
+    # do modification
+    xlSheet.Cells(row, CELLS_PUBLIC['date']).value = '=NOW()'
+    for element in data:
+        if (element != 'id_personne') and (element != 'date'):
+            xlSheet.Cells(row, CELLS_PUBLIC[element]).value = data[element]
+
+    # save and quit
+    xl.DisplayAlerts = False  # avoid the alert about replacing the file
+    wb.SaveAs(os.path.abspath(path), FileFormat=xlOpenXMLWorkbookMacroEnabled)  # save file with macros
+    xl.Quit()
     return -1

@@ -45,3 +45,11 @@ class MaccroError(Exception):
 
     def __str__(self):
         return "MaccroError : an error has occurred while trying to run maccro : " + self.name + "in " + self.source
+
+
+class IdUnknown(Exception):
+    def __init__(self, primary_key):
+        self.primary_key = primary_key
+
+    def __str__(self):
+        return "IdUnknown : id : " + self.primary_key + " is not a primary key of the database."
