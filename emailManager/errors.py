@@ -1,13 +1,11 @@
 class WrongData(Exception):
-    def __init__(self, instruction, expected):
+    def __init__(self, expected):
         self.expected = expected
-        self.instruction = instruction
 
     def __str__(self):
-        msg_format = """WrongData : The data given in mail for instruction {inst}.
-        Expected : {exp}.
+        msg_format = """WrongData : You didn't gave the good number of argumets. The data expected is {exp}
         """
-        msg = msg_format.format(inst=self.instruction, exp=self.expected)
+        msg = msg_format.format(exp=self.expected)
         return msg
 
 

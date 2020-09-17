@@ -13,9 +13,12 @@ def format_data(message_body: str, headers: list):
     try:
         for inde, header in enumerate(headers):
             if splited[inde] != '':
-                formatted_data[header] = splited[inde]
+                if header == 'promo':
+                    formatted_data[header] = splited[inde][:4]
+                else:
+                    formatted_data[header] = splited[inde]
     except:
-        raise WrongData
+        raise WrongData(headers)
     return formatted_data
 
 
@@ -47,7 +50,7 @@ def format_done(message):
 
 
 def format_done_and_id(message, id_personne):
-    msg_format = """ Done with request. New id personne is : {id_personne}
+    msg_format = """ Done with request. New id personne (private) or id base (public) is : {id_personne}
     ===================
         Your e-mail
     ===================

@@ -20,12 +20,16 @@ public_headers = ['id_base', 'id_personne', 'domaine_etude', 'pays_etude', 'etab
                   'domaine_pro', 'metier', 'employeur', 'pays_pro', 'com']
 private_headers = ['id_personne', 'nom', 'prenom', 'email', 'tel', 'linkedin', 'situation', 'promo']
 
-
-def one_shot(private_db_path, public_db_path, backup_folder_path, host_imap, emailAddress, password, public_headers,
-         private_headers):
+def backup(private_db_path, backup_folder_path, public_db_path):
     # create backup
     interact_db.create_backup(private_db_path, backup_folder_path)
     interact_db.create_backup(public_db_path, backup_folder_path)
+
+def one_shot(private_db_path, public_db_path, backup_folder_path, host_imap, emailAddress, password, public_headers,
+             private_headers, backup_indicator):
+    # create backup
+    if backup_indicator:
+        backup(private_db_path, backup_folder_path, public_db_path)
 
     # get unseen e-mails
     unseen_messages = inbox.get_inbox(host_imap, emailAddress, password)
@@ -50,12 +54,24 @@ def one_shot(private_db_path, public_db_path, backup_folder_path, host_imap, ema
     return None
 
 
-def main(timelimit, private_db_path, public_db_path, backup_folder_path, host_imap, emailAddress, password, public_headers,
-     private_headers):
+def main(timelimit, private_db_path, public_db_path, backup_folder_path, host_imap, emailAddress, password,
+         public_headers, private_headers, timeBackup):
     time1 = time.time()
+    lastbackup = time.time()
     time2 = time.time()
+    first_time = True
     while time2 - time1 < timelimit:
+        backup_indicator = False
+        if (time2 - lastbackup > timeBackup) or first_time: #on fait un backup des bases de données au premier passage et toutes les timeBackup
+            backup_indicator = True
+            first_time = False
         one_shot(private_db_path, public_db_path, backup_folder_path, host_imap, emailAddress, password, public_headers,
-     private_headers)
+                 private_headers, backup_indicator)
         wait_minute(2)
         time2 = time.time()
+
+timeBackup = 15*60
+#main(3600*6, private_db_path, public_db_path, backup_folder_path, host_imap, emailAddress, password, public_headers,private_headers, timeBackup)
+
+one_shot(private_db_path, public_db_path, backup_folder_path, host_imap, emailAddress, password, public_headers,
+         private_headers, True)
